@@ -106,6 +106,9 @@
             <div class="bg-[#f8faff] rounded-[2rem] border-l-[8px] border-sky-500 p-10 text-left shadow-sm border border-slate-100 relative overflow-hidden">
                 <div class="absolute top-0 right-0 -mr-8 -mt-8 w-24 h-24 bg-sky-100 rounded-full blur-2xl opacity-40"></div>
                 <div class="space-y-6 relative z-10">
+                    <div id="cheat-notice-text" class="hidden mb-4 p-3 bg-rose-50 border border-rose-100 text-rose-600 rounded-xl text-center font-black text-xs uppercase tracking-widest">
+                        ⚠️ Terdeteksi Melakukan Kecurangan
+                    </div>
                     <div class="flex items-start">
                         <span class="mt-1 mr-4 text-emerald-500 bg-emerald-100 p-1 rounded-full">
                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
@@ -146,8 +149,7 @@
     </div>
 
 <script>
-    // MASUKKAN URL WEB APP GOOGLE SCRIPT ANDA DI SINI
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw2_svnqIsLxxAL1qhwQEkEttLt1vh4ro7NXrHxiNHoQ17Ps7e_Qh32DTmvEL-ymL8E8A/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx8JikFKd9WeRP6vtWOogN-41lO5kp8T5_tzWnUTqigM-M6OCUe7zsQjqIkt00ps38YTw/exec";
 
     const soalData = [
         { q: "Gradien garis yang melalui titik \\(A(2,5)\\) dan \\(B(4,9)\\) adalah...", a: ["-2", "-1", "\\(\\frac{1}{2}\\)", "2", "4"], k: 3 },
@@ -163,8 +165,8 @@
     ];
 
     let timer;
-    let tabPindahCount = 0;
     let quizActive = false;
+    let userHasCheated = false; // Kunci permanen jika curang
     let answers = Array(soalData.length).fill(null);
 
     function showModal({ title, desc, btnPrimary, btnSecondary, onConfirm }) {
@@ -183,26 +185,31 @@
         overlay.style.display = 'flex';
     }
 
-    window.onblur = function() {
-        if (!quizActive) return;
-        tabPindahCount++;
-        document.getElementById('violation-count').innerText = tabPindahCount;
+    // Deteksi Pindah Tab (Blur & Visibility Change)
+    function handleViolation() {
+        if (!quizActive || userHasCheated) return;
+        
+        userHasCheated = true; // Kunci status curang
+        document.getElementById('violation-count').innerText = "1";
         document.getElementById('violation-badge').classList.remove('hidden');
         
         const badge = document.getElementById('violation-badge');
         badge.classList.add('animate-shake');
-        setTimeout(() => badge.classList.remove('animate-shake'), 500);
+        
+        // Hentikan ujian dan kirim data sebagai "CURANG"
+        hitungDanTampilkanHasil(); 
+        
+        showModal({ 
+            title: "AKSES DIBLOKIR", 
+            desc: "Anda terdeteksi meninggalkan halaman ujian. Sesuai sistem keamanan, sesi Anda telah dihentikan secara otomatis dengan catatan pelanggaran.", 
+            btnPrimary: { text: "LIHAT HASIL" } 
+        });
+    }
 
-        // Jika pindah tab satu kali, langsung kunci dan anggap curang
-        if (tabPindahCount >= 1) {
-            hitungDanTampilkanHasil(true);
-            showModal({ 
-                title: "AKSES DIBLOKIR", 
-                desc: "Anda terdeteksi meninggalkan halaman ujian. Sesuai sistem keamanan, sesi Anda telah dihentikan secara otomatis.", 
-                btnPrimary: { text: "LIHAT HASIL AKHIR" } 
-            });
-        }
-    };
+    window.onblur = handleViolation;
+    document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === 'hidden') handleViolation();
+    });
 
     function mulaiKuis() {
         const name = document.getElementById('userName').value.trim();
@@ -269,10 +276,13 @@
         });
     }
 
-    async function hitungDanTampilkanHasil(isCheating = false) {
+    async function hitungDanTampilkanHasil() {
         clearInterval(timer);
         quizActive = false;
-        window.onblur = null;
+        
+        // Nonaktifkan listener pelanggaran agar tidak loop
+        window.onblur = null; 
+
         document.getElementById('quizSection').classList.add('hidden');
         document.getElementById('loadingSection').classList.remove('hidden');
 
@@ -284,24 +294,23 @@
 
         const skor = Math.round((nomorBenar.length / soalData.length) * 100);
         const namaSiswa = document.getElementById('userName').value;
+        const statusFinal = userHasCheated ? "CURANG" : "OK";
+        
         const benarListString = nomorBenar.length > 0 ? nomorBenar.join(', ') : "-";
         const salahListString = nomorSalah.length > 0 ? nomorSalah.join(', ') : "-";
-
-        // Menyiapkan payload data
-        const payload = JSON.stringify({ 
-            nama: namaSiswa, 
-            skor: skor, 
-            status: isCheating ? "CURANG" : "OK",
-            noBenar: benarListString,
-            noSalah: salahListString
-        });
 
         // KIRIM DATA KE GOOGLE SHEETS
         try {
             await fetch(SCRIPT_URL, {
                 method: "POST", 
                 mode: "no-cors",
-                body: payload
+                body: JSON.stringify({ 
+                    nama: namaSiswa, 
+                    skor: skor, 
+                    status: statusFinal,
+                    noBenar: benarListString,
+                    noSalah: salahListString
+                })
             });
         } catch (e) {
             console.error("Gagal mengirim data:", e);
@@ -315,7 +324,12 @@
             
             document.getElementById('listBenar').innerText = benarListString;
             document.getElementById('listSalah').innerText = salahListString;
-        }, 1000);
+
+            if(userHasCheated) {
+                document.getElementById('cheat-notice-text').classList.remove('hidden');
+                document.getElementById('displaySkor').classList.replace('text-rose-500', 'text-slate-400');
+            }
+        }, 800);
     }
 </script>
 </body>
