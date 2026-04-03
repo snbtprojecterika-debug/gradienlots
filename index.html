@@ -40,17 +40,17 @@
     <nav class="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50 px-4 py-3">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
             <div class="flex items-center space-x-3">
-                <div class="bg-indigo-600 p-2.5 rounded-xl">
+                <div class="bg-indigo-600 p-2.5 rounded-xl shadow-lg shadow-indigo-100">
                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
                 </div>
                 <h1 class="font-extrabold text-lg">SNBT Master</h1>
             </div>
             <div id="quiz-meta" class="hidden flex items-center space-x-4">
                 <div id="violation-badge" class="hidden flex items-center space-x-2 bg-rose-50 border border-rose-100 px-3 py-1.5 rounded-full">
-                    <span class="text-[9px] font-black text-rose-600 uppercase">Pelanggaran: <span id="violation-count">0</span>/3</span>
+                    <span class="text-[9px] font-black text-rose-600 uppercase tracking-tighter">Pelanggaran: <span id="violation-count">0</span>/3</span>
                 </div>
-                <div class="bg-slate-900 px-4 py-2 rounded-2xl">
-                    <span id="time" class="font-mono font-bold text-white">10:00</span>
+                <div class="bg-slate-900 px-4 py-2 rounded-2xl shadow-sm">
+                    <span id="time" class="font-mono font-bold text-white tracking-widest text-sm">10:00</span>
                 </div>
             </div>
         </div>
@@ -59,17 +59,18 @@
     <main class="max-w-6xl mx-auto p-4 md:p-8">
         <!-- Landing Section -->
         <div id="landingSection" class="max-w-xl mx-auto bg-white rounded-[2.5rem] shadow-xl overflow-hidden border border-slate-100">
-            <div class="bg-indigo-600 p-10 text-white text-center">
-                <h2 class="text-3xl font-black mb-2 uppercase">Latihan Gradien</h2>
-                <p class="text-indigo-100 opacity-90">Kuasai Persamaan Garis Lurus</p>
+            <div class="bg-indigo-600 p-10 text-white text-center relative overflow-hidden">
+                <div class="absolute top-0 right-0 -mr-10 -mt-10 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+                <h2 class="text-3xl font-black mb-2 uppercase tracking-tight">Latihan Gradien</h2>
+                <p class="text-indigo-100 opacity-90 italic">Uji Kemampuan Persamaan Garis Lurus</p>
             </div>
             <div class="p-10 space-y-8">
                 <div class="space-y-3">
-                    <label class="block text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Nama Peserta</label>
-                    <input type="text" id="userName" class="w-full px-6 py-5 bg-slate-50 border-2 border-slate-100 rounded-3xl focus:border-indigo-500 outline-none transition-all font-bold" placeholder="Masukkan nama Anda...">
+                    <label class="block text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Nama Lengkap Peserta</label>
+                    <input type="text" id="userName" class="w-full px-6 py-5 bg-slate-50 border-2 border-slate-100 rounded-3xl focus:border-indigo-500 focus:bg-white outline-none transition-all font-bold text-slate-800" placeholder="Masukkan nama Anda...">
                 </div>
-                <button onclick="mulaiKuis()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-5 rounded-3xl transition-all uppercase tracking-widest">
-                    Mulai Sekarang
+                <button onclick="mulaiKuis()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-5 rounded-3xl transition-all shadow-xl shadow-indigo-100 uppercase tracking-[0.2em] transform active:scale-95">
+                    Mulai Ujian
                 </button>
             </div>
         </div>
@@ -77,71 +78,77 @@
         <!-- Loading Section -->
         <div id="loadingSection" class="hidden flex flex-col items-center justify-center min-h-[50vh] space-y-4">
             <div class="w-12 h-12 border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin"></div>
-            <p class="font-bold text-slate-500">Memproses hasil...</p>
+            <p class="font-bold text-slate-500 tracking-wide">Sedang mengirimkan data...</p>
         </div>
 
         <!-- Quiz Section -->
         <div id="quizSection" class="hidden space-y-8 max-w-3xl mx-auto">
-            <div id="isiSoal" class="space-y-8 pb-20"></div>
-            <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-4 z-40">
+            <div id="isiSoal" class="space-y-8 pb-24"></div>
+            
+            <!-- Floating Footer -->
+            <div class="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-slate-200 p-4 z-40">
                 <div class="max-w-3xl mx-auto flex justify-center">
-                    <button onclick="tampilkanKonfirmasiSelesai()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-4 rounded-2xl uppercase tracking-widest text-sm">
-                        Kirim Jawaban
+                    <button onclick="tampilkanKonfirmasiSelesai()" class="w-full max-w-md bg-emerald-600 hover:bg-emerald-700 text-white font-black py-4 rounded-2xl shadow-lg shadow-emerald-100 transition-all uppercase tracking-widest text-sm transform active:scale-95">
+                        Kirim Jawaban Akhir
                     </button>
                 </div>
             </div>
         </div>
 
         <!-- Result Section -->
-        <div id="resultSection" class="hidden max-w-2xl mx-auto space-y-6 text-center animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <h2 class="text-4xl font-extrabold text-slate-800">Hasil Latihan</h2>
-            <p class="text-lg text-slate-600">Selamat <strong id="resNama" class="text-slate-900">Peserta</strong>, Anda telah menyelesaikan kuis!</p>
+        <div id="resultSection" class="hidden max-w-2xl mx-auto space-y-8 text-center animate-in fade-in slide-in-from-bottom-6 duration-700">
+            <div class="space-y-2">
+                <h2 class="text-4xl font-extrabold text-slate-800 tracking-tight">Hasil Latihan</h2>
+                <p class="text-lg text-slate-500">Selamat <strong id="resNama" class="text-slate-900">Peserta</strong>, Anda telah menyelesaikan kuis!</p>
+            </div>
             
-            <div id="displaySkor" class="text-[120px] font-black text-rose-500 leading-none py-8">0</div>
+            <div id="displaySkor" class="text-[140px] font-black text-rose-500 leading-none py-6 drop-shadow-sm">0</div>
 
-            <div class="bg-[#f8faff] rounded-2xl border-l-[6px] border-sky-500 p-8 text-left shadow-sm">
-                <div class="space-y-4">
+            <div class="bg-[#f8faff] rounded-[2rem] border-l-[8px] border-sky-500 p-10 text-left shadow-sm border border-slate-100 relative overflow-hidden">
+                <div class="absolute top-0 right-0 -mr-8 -mt-8 w-24 h-24 bg-sky-100 rounded-full blur-2xl opacity-40"></div>
+                <div class="space-y-6 relative z-10">
                     <div class="flex items-start">
-                        <span class="mt-1 mr-3 text-emerald-500">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                        <span class="mt-1 mr-4 text-emerald-500 bg-emerald-100 p-1 rounded-full">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
                         </span>
                         <div>
-                            <span class="font-bold text-slate-700">Jawaban Benar:</span>
-                            <span id="listBenar" class="text-slate-600 ml-1 italic">Memuat...</span>
+                            <p class="font-black text-slate-800 uppercase text-[10px] tracking-widest mb-1">Jawaban Benar</p>
+                            <span id="listBenar" class="text-slate-600 font-bold italic text-lg leading-relaxed tracking-wide">Memuat...</span>
                         </div>
                     </div>
                     <div class="flex items-start">
-                        <span class="mt-1 mr-3 text-rose-500">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>
+                        <span class="mt-1 mr-4 text-rose-500 bg-rose-100 p-1 rounded-full">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>
                         </span>
                         <div>
-                            <span class="font-bold text-slate-700">Jawaban Salah:</span>
-                            <span id="listSalah" class="text-slate-600 ml-1 italic">Memuat...</span>
+                            <p class="font-black text-slate-800 uppercase text-[10px] tracking-widest mb-1">Jawaban Salah</p>
+                            <span id="listSalah" class="text-slate-600 font-bold italic text-lg leading-relaxed tracking-wide">Memuat...</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="pt-6">
-                <button onclick="location.reload()" class="bg-indigo-600 text-white font-bold py-4 px-12 rounded-full hover:bg-indigo-700 transition-all uppercase tracking-widest text-sm">Ulangi Kuis</button>
+            <div class="pt-10">
+                <button onclick="location.reload()" class="bg-slate-900 text-white font-bold py-5 px-16 rounded-full hover:bg-black transition-all shadow-xl shadow-slate-200 uppercase tracking-[0.2em] text-xs transform active:scale-95">Ulangi Sesi Kuis</button>
             </div>
         </div>
     </main>
 
-    <!-- Modal -->
+    <!-- Modal System -->
     <div id="modal-overlay" class="fixed inset-0 bg-slate-900/60 z-[100] flex items-center justify-center p-6">
-        <div class="bg-white rounded-[2rem] max-w-sm w-full p-10 shadow-2xl">
-            <h3 id="modal-title" class="text-xl font-bold text-center mb-4"></h3>
-            <p id="modal-desc" class="text-slate-500 text-center mb-8 text-sm"></p>
+        <div class="bg-white rounded-[2.5rem] max-w-sm w-full p-10 shadow-2xl transform transition-all">
+            <h3 id="modal-title" class="text-2xl font-black text-center mb-4 tracking-tight"></h3>
+            <p id="modal-desc" class="text-slate-500 text-center mb-10 text-sm leading-relaxed"></p>
             <div class="space-y-3">
-                <button id="modal-btn-primary" class="w-full py-4 rounded-2xl font-bold text-white bg-indigo-600"></button>
-                <button id="modal-btn-secondary" class="w-full py-4 text-slate-400 font-bold text-sm hidden"></button>
+                <button id="modal-btn-primary" class="w-full py-5 rounded-3xl font-black text-white bg-indigo-600 shadow-lg shadow-indigo-100 uppercase tracking-widest text-xs transform active:scale-95"></button>
+                <button id="modal-btn-secondary" class="w-full py-4 text-slate-400 font-bold text-xs uppercase tracking-widest hidden hover:text-slate-600"></button>
             </div>
         </div>
     </div>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxjgmt0dbA0LGTTjfTfKhz-7Zg0HbBiHSpfi-FLixeIdNp2qcfduysrdNtSR9BNtmkXvQ/exec";
+    // MASUKKAN URL WEB APP GOOGLE SCRIPT ANDA DI SINI
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx8JikFKd9WeRP6vtWOogN-41lO5kp8T5_tzWnUTqigM-M6OCUe7zsQjqIkt00ps38YTw/exec";
 
     const soalData = [
         { q: "Gradien garis yang melalui titik \\(A(2,5)\\) dan \\(B(4,9)\\) adalah...", a: ["-2", "-1", "\\(\\frac{1}{2}\\)", "2", "4"], k: 3 },
@@ -182,17 +189,26 @@
         tabPindahCount++;
         document.getElementById('violation-count').innerText = tabPindahCount;
         document.getElementById('violation-badge').classList.remove('hidden');
+        
+        // Animasi kocok jika ada pelanggaran
+        const badge = document.getElementById('violation-badge');
+        badge.classList.add('animate-shake');
+        setTimeout(() => badge.classList.remove('animate-shake'), 500);
+
         if (tabPindahCount >= 3) {
             hitungDanTampilkanHasil(true);
-            showModal({ title: "Akses Terkunci", desc: "Anda berpindah tab 3 kali. Kuis dihentikan.", btnPrimary: { text: "Lihat Hasil" } });
+            showModal({ title: "AKSES DIBLOKIR", desc: "Anda berpindah jendela 3 kali. Sistem menghentikan sesi Anda secara otomatis.", btnPrimary: { text: "LIHAT HASIL" } });
         } else {
-            showModal({ title: "Peringatan", desc: `Jangan tinggalkan tab kuis! (${tabPindahCount}/3)`, btnPrimary: { text: "Kembali" } });
+            showModal({ title: "PERINGATAN KERAS", desc: `Dilarang meninggalkan halaman kuis! Pelanggaran: ${tabPindahCount}/3.`, btnPrimary: { text: "KEMBALI KE KUIS" } });
         }
     };
 
     function mulaiKuis() {
         const name = document.getElementById('userName').value.trim();
-        if (!name) return alert("Masukkan nama!");
+        if (!name) {
+            showModal({ title: "Nama Dibutuhkan", desc: "Silakan masukkan nama lengkap Anda untuk memulai sesi kuis.", btnPrimary: { text: "MENGERTI" } });
+            return;
+        }
         document.getElementById('landingSection').classList.add('hidden');
         document.getElementById('quizSection').classList.remove('hidden');
         document.getElementById('quiz-meta').classList.remove('hidden');
@@ -205,15 +221,18 @@
         let html = "";
         soalData.forEach((s, i) => {
             html += `
-                <div class="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm">
-                    <p class="font-bold text-lg mb-6"><span class="text-indigo-600 mr-2">${i+1}.</span>${s.q}</p>
-                    <div class="space-y-3">
+                <div class="bg-white p-8 md:p-10 rounded-[2.5rem] border border-slate-200 shadow-sm">
+                    <div class="flex items-start mb-8">
+                        <span class="bg-indigo-600 text-white w-10 h-10 flex items-center justify-center rounded-2xl font-black mr-5 shrink-0 shadow-lg shadow-indigo-50 text-sm">${i+1}</span>
+                        <div class="text-slate-800 font-bold text-xl leading-relaxed">${s.q}</div>
+                    </div>
+                    <div class="grid grid-cols-1 gap-3.5 ml-0 md:ml-14">
                         ${s.a.map((opt, idx) => `
-                            <label class="block cursor-pointer">
+                            <label class="block cursor-pointer group">
                                 <input type="radio" name="q${i}" value="${idx}" class="option-input hidden" onchange="answers[${i}]=${idx}">
-                                <div class="option-card border-2 border-slate-100 rounded-2xl p-4 flex items-center transition-all">
-                                    <span class="option-marker w-8 h-8 flex items-center justify-center border-2 border-slate-100 rounded-lg text-xs font-bold mr-4 text-slate-400 bg-white">${String.fromCharCode(65+idx)}</span>
-                                    <span class="text-slate-600 font-medium">${opt}</span>
+                                <div class="option-card border-2 border-slate-100 rounded-2xl p-5 flex items-center transition-all group-hover:border-indigo-100">
+                                    <span class="option-marker w-9 h-9 flex items-center justify-center border-2 border-slate-100 rounded-xl text-[11px] font-black mr-5 text-slate-300 bg-white">${String.fromCharCode(65+idx)}</span>
+                                    <span class="text-slate-600 font-semibold">${opt}</span>
                                 </div>
                             </label>
                         `).join('')}
@@ -237,11 +256,14 @@
     }
 
     function tampilkanKonfirmasiSelesai() {
+        const unsolved = answers.filter(a => a === null).length;
+        const msg = unsolved > 0 ? `Terdapat ${unsolved} soal yang belum Anda jawab. Yakin ingin mengakhiri sekarang?` : "Apakah Anda yakin ingin mengirimkan jawaban Anda?";
+        
         showModal({
             title: "Selesaikan Kuis?",
-            desc: "Pastikan semua jawaban sudah terisi.",
-            btnPrimary: { text: "Ya, Kirim" },
-            btnSecondary: { text: "Batal" },
+            desc: msg,
+            btnPrimary: { text: "YA, KIRIM DATA" },
+            btnSecondary: { text: "PERIKSA LAGI" },
             onConfirm: () => hitungDanTampilkanHasil()
         });
     }
@@ -249,6 +271,7 @@
     async function hitungDanTampilkanHasil(isCheating = false) {
         clearInterval(timer);
         quizActive = false;
+        window.onblur = null;
         document.getElementById('quizSection').classList.add('hidden');
         document.getElementById('loadingSection').classList.remove('hidden');
 
@@ -260,30 +283,37 @@
 
         const skor = Math.round((nomorBenar.length / soalData.length) * 100);
         const namaSiswa = document.getElementById('userName').value;
-        const benarListString = nomorBenar.length > 0 ? nomorBenar.join(', ') : "Tidak ada";
-        const salahListString = nomorSalah.length > 0 ? nomorSalah.join(', ') : "Tidak ada";
+        const benarListString = nomorBenar.length > 0 ? nomorBenar.join(', ') : "-";
+        const salahListString = nomorSalah.length > 0 ? nomorSalah.join(', ') : "-";
 
-        // Kirim data ke Google Sheets
-        await fetch(SCRIPT_URL, {
-            method: "POST", 
-            mode: "no-cors",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ 
-                nama: namaSiswa, 
-                skor: skor, 
-                status: isCheating ? "CURANG" : "OK",
-                jawabanBenar: benarListString,
-                jawabanSalah: salahListString
-            })
-        }).catch(() => {});
+        // KIRIM DATA KE GOOGLE SHEETS
+        try {
+            await fetch(SCRIPT_URL, {
+                method: "POST", 
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ 
+                    nama: namaSiswa, 
+                    skor: skor, 
+                    status: isCheating ? "CURANG" : "OK",
+                    noBenar: benarListString,
+                    noSalah: salahListString
+                })
+            });
+        } catch (e) {
+            console.error("Gagal mengirim data:", e);
+        }
 
-        document.getElementById('loadingSection').classList.add('hidden');
-        document.getElementById('resultSection').classList.remove('hidden');
-        document.getElementById('displaySkor').innerText = skor;
-        document.getElementById('resNama').innerText = namaSiswa;
-        
-        document.getElementById('listBenar').innerText = benarListString;
-        document.getElementById('listSalah').innerText = salahListString;
+        // Delay sedikit untuk efek transisi mulus
+        setTimeout(() => {
+            document.getElementById('loadingSection').classList.add('hidden');
+            document.getElementById('resultSection').classList.remove('hidden');
+            document.getElementById('displaySkor').innerText = skor;
+            document.getElementById('resNama').innerText = namaSiswa;
+            
+            document.getElementById('listBenar').innerText = benarListString;
+            document.getElementById('listSalah').innerText = salahListString;
+        }, 1000);
     }
 </script>
 </body>
