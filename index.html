@@ -141,7 +141,7 @@
     </div>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzLOozTom_-dgILipEENznRgVLRiySjiBWxLRlWmLRYKDRVuZ-ga3HJN2QqV9BIek7svA/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx8JikFKd9WeRP6vtWOogN-41lO5kp8T5_tzWnUTqigM-M6OCUe7zsQjqIkt00ps38YTw/exec";
 
     const soalData = [
         { q: "Gradien garis yang melalui titik \\(A(2,5)\\) dan \\(B(4,9)\\) adalah...", a: ["-2", "-1", "\\(\\frac{1}{2}\\)", "2", "4"], k: 3 },
@@ -260,11 +260,21 @@
 
         const skor = Math.round((nomorBenar.length / soalData.length) * 100);
         const namaSiswa = document.getElementById('userName').value;
+        const benarListString = nomorBenar.length > 0 ? nomorBenar.join(', ') : "Tidak ada";
+        const salahListString = nomorSalah.length > 0 ? nomorSalah.join(', ') : "Tidak ada";
 
-        // Kirim data (Opsional)
+        // Kirim data ke Google Sheets
         await fetch(SCRIPT_URL, {
-            method: "POST", mode: "no-cors",
-            body: JSON.stringify({ nama: namaSiswa, skor: skor, status: isCheating ? "CURANG" : "OK" })
+            method: "POST", 
+            mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ 
+                nama: namaSiswa, 
+                skor: skor, 
+                status: isCheating ? "CURANG" : "OK",
+                jawabanBenar: benarListString,
+                jawabanSalah: salahListString
+            })
         }).catch(() => {});
 
         document.getElementById('loadingSection').classList.add('hidden');
@@ -272,8 +282,8 @@
         document.getElementById('displaySkor').innerText = skor;
         document.getElementById('resNama').innerText = namaSiswa;
         
-        document.getElementById('listBenar').innerText = nomorBenar.length > 0 ? nomorBenar.join(', ') : "Tidak ada";
-        document.getElementById('listSalah').innerText = nomorSalah.length > 0 ? nomorSalah.join(', ') : "Tidak ada";
+        document.getElementById('listBenar').innerText = benarListString;
+        document.getElementById('listSalah').innerText = salahListString;
     }
 </script>
 </body>
