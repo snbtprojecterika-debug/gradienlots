@@ -85,7 +85,6 @@
         <div id="quizSection" class="hidden space-y-8 max-w-3xl mx-auto">
             <div id="isiSoal" class="space-y-8 pb-24"></div>
             
-            <!-- Floating Footer -->
             <div class="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-slate-200 p-4 z-40">
                 <div class="max-w-3xl mx-auto flex justify-center">
                     <button onclick="tampilkanKonfirmasiSelesai()" class="w-full max-w-md bg-emerald-600 hover:bg-emerald-700 text-white font-black py-4 rounded-2xl shadow-lg shadow-emerald-100 transition-all uppercase tracking-widest text-sm transform active:scale-95">
@@ -190,7 +189,6 @@
         document.getElementById('violation-count').innerText = tabPindahCount;
         document.getElementById('violation-badge').classList.remove('hidden');
         
-        // Animasi kocok jika ada pelanggaran
         const badge = document.getElementById('violation-badge');
         badge.classList.add('animate-shake');
         setTimeout(() => badge.classList.remove('animate-shake'), 500);
@@ -286,25 +284,26 @@
         const benarListString = nomorBenar.length > 0 ? nomorBenar.join(', ') : "-";
         const salahListString = nomorSalah.length > 0 ? nomorSalah.join(', ') : "-";
 
+        // Menyiapkan payload data
+        const payload = JSON.stringify({ 
+            nama: namaSiswa, 
+            skor: skor, 
+            status: isCheating ? "CURANG" : "OK",
+            noBenar: benarListString,
+            noSalah: salahListString
+        });
+
         // KIRIM DATA KE GOOGLE SHEETS
         try {
             await fetch(SCRIPT_URL, {
                 method: "POST", 
                 mode: "no-cors",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ 
-                    nama: namaSiswa, 
-                    skor: skor, 
-                    status: isCheating ? "CURANG" : "OK",
-                    noBenar: benarListString,
-                    noSalah: salahListString
-                })
+                body: payload
             });
         } catch (e) {
             console.error("Gagal mengirim data:", e);
         }
 
-        // Delay sedikit untuk efek transisi mulus
         setTimeout(() => {
             document.getElementById('loadingSection').classList.add('hidden');
             document.getElementById('resultSection').classList.remove('hidden');
