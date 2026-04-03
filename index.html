@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latihan SNBT: Gradien & Garis Lurus</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #f1f5f9; 
+            user-select: none; /* Mencegah seleksi teks */
+        }
+        .option-input:checked + .option-card { 
+            border-color: #4f46e5; 
+            background-color: #eef2ff; 
+            box-shadow: 0 0 0 1px #4f46e5;
+        }
+        .option-input:checked + .option-card .option-marker {
+            background-color: #4f46e5;
+            color: white;
+            border-color: #4f46e5;
+        }
+        #modal-overlay { backdrop-filter: blur(8px); display: none; }
+        
+        /* Animasi untuk peringatan */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        .animate-shake { animation: shake 0.2s ease-in-out 0s 2; }
+    </style>
+</head>
+<body class="min-h-screen text-slate-900" oncontextmenu="return false;">
+
+    <!-- Navbar -->
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 px-4 py-3">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-600 p-2 rounded-lg">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-lg leading-tight">SNBT Master</h1>
+                    <p class="text-xs text-slate-500 font-medium uppercase tracking-tighter">Anti-Cheat System Active</p>
+                </div>
+            </div>
+            <div id="quiz-meta" class="hidden flex items-center space-x-3">
+                <!-- Cheat Warning Indicator -->
+                <div id="violation-badge" class="hidden flex items-center space-x-1 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-full">
+                    <span class="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></span>
+                    <span class="text-[10px] font-bold text-amber-700 uppercase">Pelanggaran: <span id="violation-count">0</span>/3</span>
+                </div>
+                <div class="flex items-center space-x-2 bg-red-50 px-3 py-1.5 rounded-full border border-red-100">
+                    <span id="time" class="font-mono font-bold text-red-600 text-sm md:text-base">10:00</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto p-4 md:p-8">
+        <!-- Landing Section -->
+        <div id="landingSection" class="max-w-2xl mx-auto bg-white rounded-3xl shadow-xl shadow-slate-200/50 overflow-hidden">
+            <div class="bg-indigo-600 p-8 text-white text-center">
+                <h2 class="text-3xl font-black mb-2 tracking-tight uppercase">Topik: Gradien</h2>
+                <p class="text-indigo-100 font-medium italic">Sistem Anti-Curang Aktif</p>
+            </div>
+            <div class="p-8 space-y-8">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <p class="text-xs text-slate-500 font-bold uppercase mb-1">Jumlah Soal</p>
+                        <p class="text-xl font-bold">10 Soal</p>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <p class="text-xs text-slate-500 font-bold uppercase mb-1">Waktu</p>
+                        <p class="text-xl font-bold">10 Menit</p>
+                    </div>
+                </div>
+
+                <div class="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-xl">
+                    <h4 class="text-sm font-bold text-amber-800 uppercase mb-1">Peringatan Anti-Curang:</h4>
+                    <ul class="text-xs text-amber-700 space-y-1 list-disc list-inside">
+                        <li>Dilarang berpindah tab atau meminimalkan jendela.</li>
+                        <li>Batas toleransi kesalahan hanya <b>2 kali</b>. Pelanggaran ke-3 akan mengakhiri kuis.</li>
+                        <li>Klik kanan dan seleksi teks dinonaktifkan.</li>
+                    </ul>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-slate-700">Nama Lengkap</label>
+                    <input type="text" id="userName" class="w-full px-5 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-indigo-500 focus:bg-white outline-none transition-all font-semibold" placeholder="Masukkan nama Anda...">
+                </div>
+
+                <button onclick="mulaiKuis()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-5 rounded-2xl shadow-lg shadow-indigo-200 transform active:scale-[0.98] transition-all text-lg tracking-wide uppercase">
+                    Mulai Latihan
+                </button>
+            </div>
+        </div>
+
+        <!-- Quiz Section -->
+        <div id="quizSection" class="hidden grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <div class="hidden lg:block lg:col-span-1">
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 sticky top-24">
+                    <h3 class="font-bold text-slate-800 mb-4 flex items-center text-sm uppercase tracking-wider">Navigasi Soal</h3>
+                    <div id="navGrid" class="grid grid-cols-5 gap-2"></div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-3 space-y-6">
+                <div id="isiSoal" class="space-y-6 pb-20"></div>
+                
+                <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-4 lg:relative lg:bg-transparent lg:border-none lg:p-0 z-40">
+                    <div class="max-w-6xl mx-auto flex justify-between items-center lg:justify-end">
+                        <div class="lg:hidden flex-1 mr-4">
+                            <div class="w-full bg-slate-200 rounded-full h-2">
+                                <div id="progressBar" class="bg-indigo-600 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <button id="btnSelesai" onclick="tampilkanKonfirmasiSelesai()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-all transform active:scale-95">
+                            KIRIM JAWABAN
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Result Section -->
+        <div id="resultSection" class="hidden max-w-4xl mx-auto space-y-8 animate-in fade-in duration-700">
+            <div class="bg-white rounded-3xl shadow-xl p-8 text-center border border-slate-100">
+                <div class="flex justify-center mb-6">
+                    <div class="relative w-40 h-40 flex items-center justify-center">
+                        <svg class="absolute inset-0 w-full h-full -rotate-90">
+                            <circle cx="80" cy="80" r="74" stroke="currentColor" stroke-width="10" fill="transparent" class="text-slate-100" />
+                            <circle id="scoreProgress" cx="80" cy="80" r="74" stroke="currentColor" stroke-width="10" fill="transparent" stroke-dasharray="464.9" stroke-dashoffset="464.9" class="text-indigo-600 transition-all duration-1000 ease-out" />
+                        </svg>
+                        <div class="flex flex-col items-center">
+                            <span id="displaySkor" class="text-5xl font-black text-slate-800">0</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-slate-800 mb-2">Hasil Latihan, <span id="resNama" class="text-indigo-600"></span>!</h2>
+                <div id="cheat-notice-final" class="hidden mb-4 p-2 bg-red-100 text-red-700 text-xs font-bold rounded-lg uppercase tracking-widest">⚠️ Dihentikan Sistem (Curang)</div>
+                
+                <div id="detailStats" class="grid grid-cols-3 gap-4 mb-8 mt-6">
+                    <div class="p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
+                        <p class="text-[10px] font-bold text-emerald-600 uppercase mb-1">Benar</p>
+                        <p id="statBenar" class="text-xl font-black text-emerald-700">0</p>
+                    </div>
+                    <div class="p-4 bg-rose-50 rounded-2xl border border-rose-100">
+                        <p class="text-[10px] font-bold text-rose-600 uppercase mb-1">Salah</p>
+                        <p id="statSalah" class="text-xl font-black text-rose-700">0</p>
+                    </div>
+                    <div class="p-4 bg-amber-50 rounded-2xl border border-amber-100">
+                        <p class="text-[10px] font-bold text-amber-600 uppercase mb-1">Kosong</p>
+                        <p id="statKosong" class="text-xl font-black text-amber-700">0</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <button onclick="location.reload()" class="flex-1 bg-slate-800 text-white font-bold py-4 rounded-2xl hover:bg-black transition-all">Ulangi</button>
+                    <button onclick="scrollKeReview()" class="flex-1 bg-indigo-50 text-indigo-600 font-bold py-4 rounded-2xl border border-indigo-100">Review Pembahasan</button>
+                </div>
+            </div>
+
+            <div id="reviewContainer" class="space-y-6">
+                <h3 class="text-xl font-black text-slate-800 flex items-center">
+                    <span class="bg-indigo-600 w-2 h-8 rounded-full mr-3"></span>
+                    Pembahasan Soal
+                </h3>
+                <div id="reviewList" class="space-y-4"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal System -->
+    <div id="modal-overlay" class="fixed inset-0 bg-slate-900/60 z-[100] flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-8 shadow-2xl transform transition-all scale-100">
+            <div id="modal-icon" class="mb-6 flex justify-center"></div>
+            <h3 id="modal-title" class="text-2xl font-black text-slate-900 text-center mb-2"></h3>
+            <p id="modal-desc" class="text-slate-500 text-center text-sm mb-8"></p>
+            <div id="modal-actions" class="flex flex-col space-y-3">
+                <button id="modal-btn-primary" class="w-full py-4 rounded-2xl font-black text-white transition-all"></button>
+                <button id="modal-btn-secondary" class="w-full py-3 rounded-2xl font-bold text-slate-400"></button>
+            </div>
+        </div>
+    </div>
+
+<script>
+    const soalData = [
+        { 
+            q: "Gradien garis yang melalui titik \\(A(2,5)\\) dan \\(B(4,9)\\) adalah...", 
+            a: ["-2", "-1", "\\(\\frac{1}{2}\\)", "2", "4"], 
+            k: 3, 
+            p: "Gunakan rumus \\(m = \\frac{y_2 - y_1}{x_2 - x_1}\\). \\(m = \\frac{9 - 5}{4 - 2} = \\frac{4}{2} = 2\\)." 
+        },
+        { 
+            q: "Persamaan garis \\(y = -3x + 7\\) memiliki gradien sebesar...", 
+            a: ["-3", "\\(-\\frac{1}{3}\\)", "3", "7", "-7"], 
+            k: 0, 
+            p: "Pada bentuk \\(y = mx + c\\), gradien adalah koefisien \\(x\\). Jadi, \\(m = -3\\)." 
+        },
+        { 
+            q: "Gradien dari persamaan garis \\(2x - 5y + 10 = 0\\) adalah...", 
+            a: ["\\(-\\frac{5}{2}\\)", "\\(-\\frac{2}{5}\\)", "\\(\\frac{2}{5}\\)", "\\(\\frac{5}{2}\\)", "2"], 
+            k: 2, 
+            p: "Pada bentuk \\(Ax + By + C = 0\\), \\(m = -\\frac{A}{B}\\). Jadi, \\(m = -\\frac{2}{-5} = \\frac{2}{5}\\)." 
+        },
+        { 
+            q: "Jika sebuah garis k sejajar dengan garis \\(y = 4x - 1\\), maka gradien garis k adalah...", 
+            a: ["-4", "\\(-\\frac{1}{4}\\)", "\\(\\frac{1}{4}\\)", "1", "4"], 
+            k: 4, 
+            p: "Garis yang sejajar memiliki gradien yang sama (\\(m_1 = m_2\\)). Karena gradien garis awal adalah 4, maka gradien garis k juga 4." 
+        },
+        { 
+            q: "Gradien garis yang tegak lurus dengan garis yang memiliki gradien \\(m = \\frac{3}{2}\\) adalah...", 
+            a: ["\\(\\frac{3}{2}\\)", "\\(\\frac{2}{3}\\)", "\\(-\\frac{2}{3}\\)", "\\(-\\frac{3}{2}\\)", "0"], 
+            k: 2, 
+            p: "Garis tegak lurus memiliki hubungan \\(m_1 \\cdot m_2 = -1\\). Maka \\(m_2 = -\\frac{1}{m_1} = -\\frac{1}{3/2} = -\\frac{2}{3}\\)." 
+        },
+        { 
+            q: "Gradien garis yang melalui titik pusat koordinat \\(O(0,0)\\) dan titik \\(P(-3,6)\\) adalah...", 
+            a: ["-2", "\\(-\\frac{1}{2}\\)", "\\(\\frac{1}{2}\\)", "2", "3"], 
+            k: 0, 
+            p: "\\(m = \\frac{y}{x} = \\frac{6}{-3} = -2\\)." 
+        },
+        { 
+            q: "Diketahui sebuah garis melalui titik \\((1, a)\\) dan \\((4, 7)\\) dengan gradien 2. Nilai a yang memenuhi adalah...", 
+            a: ["1", "2", "3", "4", "5"], 
+            k: 0, 
+            p: "\\(m = \\frac{7-a}{4-1} = 2 \\rightarrow \\frac{7-a}{3} = 2 \\rightarrow 7-a = 6 \\rightarrow a = 1\\)." 
+        },
+        { 
+            q: "Gradien garis yang memotong sumbu-X di titik \\((4,0)\\) dan memotong sumbu-Y di titik \\((0,8)\\) adalah...", 
+            a: ["2", "\\(\\frac{1}{2}\\)", "\\(-\\frac{1}{2}\\)", "-2", "-4"], 
+            k: 3, 
+            p: "\\(m = \\frac{8 - 0}{0 - 4} = \\frac{8}{-4} = -2\\)." 
+        },
+        { 
+            q: "Di antara pilihan berikut, persamaan garis yang memiliki gradien paling kecil (nilai numerik terendah) adalah...", 
+            a: ["\\(y = 2x + 5\\)", "\\(2y = x - 4\\)", "\\(x + y = 10\\)", "\\(3x - y = 2\\)", "\\(y = -2x + 1\\)"], 
+            k: 4, 
+            p: "Gradien masing-masing: A=2, B=0.5, C=-1, D=3, E=-2. Nilai numerik terkecil adalah -2." 
+        },
+        { 
+            q: "Gradien garis singgung kurva \\(y = x^2\\) pada titik \\((1, 1)\\) adalah...", 
+            a: ["0", "1", "2", "3", "4"], 
+            k: 2, 
+            p: "Gradien garis singgung adalah turunan pertama: \\(y' = 2x\\). Pada \\(x = 1\\), \\(m = 2(1) = 2\\)." 
+        }
+    ];
+
+    let timer;
+    let tabPindahCount = 0;
+    let quizActive = false;
+    let answers = Array(soalData.length).fill(null);
+
+    // ANTI-CHEAT: Mencegah shortcut keyboard
+    document.onkeydown = function(e) {
+        if (e.ctrlKey && (e.keyCode === 67 || e.keyCode === 86 || e.keyCode === 85 || e.keyCode === 73)) {
+            return false;
+        }
+        if (e.keyCode === 123) return false; // F12
+    };
+
+    // ANTI-CHEAT: Deteksi tab/window focus
+    window.onblur = function() {
+        if (!quizActive) return;
+        tabPindahCount++;
+        document.getElementById('violation-count').innerText = tabPindahCount;
+        
+        const badge = document.getElementById('violation-badge');
+        badge.classList.remove('hidden');
+        badge.classList.add('animate-shake');
+        setTimeout(() => badge.classList.remove('animate-shake'), 500);
+
+        if (tabPindahCount >= 3) {
+            hitungDanTampilkanHasil(true);
+            showModal({ 
+                title: "KUIS DIHENTIKAN!", 
+                desc: "Anda telah keluar dari halaman sebanyak 3 kali. Hasil Anda otomatis dikirim sebagai tindakan pencegahan kecurangan.", 
+                btnPrimary: { text: "LIHAT HASIL", class: "bg-red-600" }, 
+                onConfirm: () => {} 
+            });
+        } else {
+            showModal({ 
+                title: "PERINGATAN KERAS!", 
+                desc: `Dilarang meninggalkan halaman kuis! Pelanggaran: ${tabPindahCount}/3. Jika mencapai 3 kali, kuis akan ditutup.`, 
+                btnPrimary: { text: "KEMBALI MENGERJAKAN", class: "bg-amber-600" }, 
+                onConfirm: () => {} 
+            });
+        }
+    };
+
+    function showModal({ title, desc, btnPrimary, btnSecondary, onConfirm }) {
+        const overlay = document.getElementById('modal-overlay');
+        document.getElementById('modal-title').innerText = title;
+        document.getElementById('modal-desc').innerText = desc;
+        
+        const b1 = document.getElementById('modal-btn-primary');
+        b1.innerText = btnPrimary.text;
+        b1.className = `w-full py-4 rounded-2xl font-black text-white transition-all ${btnPrimary.class || 'bg-indigo-600'}`;
+        b1.onclick = () => { overlay.style.display = 'none'; if(onConfirm) onConfirm(); };
+
+        const b2 = document.getElementById('modal-btn-secondary');
+        if (btnSecondary) {
+            b2.innerText = btnSecondary.text;
+            b2.style.display = 'block';
+            b2.onclick = () => { overlay.style.display = 'none'; };
+        } else { b2.style.display = 'none'; }
+        overlay.style.display = 'flex';
+    }
+
+    function mulaiKuis() {
+        if (!document.getElementById('userName').value.trim()) {
+            showModal({ title: "Nama Kosong", desc: "Harap isi nama Anda.", btnPrimary: { text: "OKE" } });
+            return;
+        }
+        document.getElementById('landingSection').classList.add('hidden');
+        document.getElementById('quizSection').classList.remove('hidden');
+        document.getElementById('quiz-meta').classList.remove('hidden');
+        quizActive = true;
+        renderSoal();
+        renderNav();
+        startTimer();
+    }
+
+    function renderSoal() {
+        let html = "";
+        soalData.forEach((s, i) => {
+            html += `
+                <div id="q-container-${i}" class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+                    <div class="flex items-start mb-6">
+                        <span class="bg-indigo-600 text-white w-8 h-8 flex items-center justify-center rounded-lg font-black mr-4 shrink-0">${i+1}</span>
+                        <div class="text-slate-800 font-bold text-lg pt-0.5">${s.q}</div>
+                    </div>
+                    <div class="grid grid-cols-1 gap-3 ml-0 md:ml-12">
+                        ${s.a.map((opt, idx) => `
+                            <label class="relative cursor-pointer group">
+                                <input type="radio" name="q${i}" value="${idx}" class="option-input hidden" onchange="handleSelect(${i}, ${idx})">
+                                <div class="option-card border-2 border-slate-100 rounded-2xl p-4 flex items-center transition-all">
+                                    <span class="option-marker w-8 h-8 flex items-center justify-center border-2 border-slate-100 rounded-lg text-xs font-black mr-4 text-slate-400 bg-white transition-all">${String.fromCharCode(65+idx)}</span>
+                                    <span class="text-slate-700 font-semibold">${opt}</span>
+                                </div>
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        });
+        document.getElementById('isiSoal').innerHTML = html;
+        if (window.MathJax) MathJax.typesetPromise();
+    }
+
+    function renderNav() {
+        let html = "";
+        for (let i = 0; i < soalData.length; i++) {
+            const statusClass = answers[i] !== null ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-400';
+            html += `<button onclick="jumpTo(${i})" id="nav-${i}" class="w-full aspect-square flex items-center justify-center rounded-lg font-bold text-xs transition-all ${statusClass}">${i+1}</button>`;
+        }
+        document.getElementById('navGrid').innerHTML = html;
+    }
+
+    function handleSelect(soalIdx, optIdx) {
+        answers[soalIdx] = optIdx;
+        const navBtn = document.getElementById(`nav-${soalIdx}`);
+        navBtn.classList.replace('bg-slate-100', 'bg-indigo-600');
+        navBtn.classList.replace('text-slate-400', 'text-white');
+        const answered = answers.filter(a => a !== null).length;
+        document.getElementById('progressBar').style.width = (answered / soalData.length) * 100 + '%';
+    }
+
+    function jumpTo(idx) {
+        const el = document.getElementById(`q-container-${idx}`);
+        window.scrollTo({ top: el.offsetTop - 100, behavior: 'smooth' });
+    }
+
+    function startTimer() {
+        let timeLeft = 10 * 60; 
+        timer = setInterval(() => {
+            timeLeft--;
+            let min = Math.floor(timeLeft / 60);
+            let sec = timeLeft % 60;
+            document.getElementById('time').innerText = `${min}:${sec < 10 ? '0'+sec : sec}`;
+            if (timeLeft <= 0) hitungDanTampilkanHasil();
+        }, 1000);
+    }
+
+    function tampilkanKonfirmasiSelesai() {
+        showModal({
+            title: "Kirim Jawaban?",
+            desc: "Pastikan Anda sudah selesai mengerjakan.",
+            btnPrimary: { text: "YA, KIRIM", class: "bg-emerald-600" },
+            btnSecondary: { text: "Batal" },
+            onConfirm: () => hitungDanTampilkanHasil()
+        });
+    }
+
+    function hitungDanTampilkanHasil(isCheating = false) {
+        clearInterval(timer);
+        quizActive = false;
+        window.onblur = null;
+
+        let benar = 0, salah = 0, kosong = 0;
+        soalData.forEach((s, i) => {
+            if (answers[i] === null) kosong++;
+            else if (answers[i] === s.k) benar++;
+            else salah++;
+        });
+        const skor = Math.round((benar / soalData.length) * 100);
+        
+        document.getElementById('quizSection').classList.add('hidden');
+        document.getElementById('quiz-meta').classList.add('hidden');
+        document.getElementById('resultSection').classList.remove('hidden');
+        
+        if (isCheating) {
+            document.getElementById('cheat-notice-final').classList.remove('hidden');
+        }
+
+        document.getElementById('displaySkor').innerText = skor;
+        document.getElementById('resNama').innerText = document.getElementById('userName').value;
+        document.getElementById('statBenar').innerText = benar;
+        document.getElementById('statSalah').innerText = salah;
+        document.getElementById('statKosong').innerText = kosong;
+
+        setTimeout(() => {
+            const circle = document.getElementById('scoreProgress');
+            const circumference = 464.9;
+            circle.style.strokeDashoffset = circumference - (skor / 100) * circumference;
+        }, 100);
+
+        renderReview();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderReview() {
+        let html = "";
+        soalData.forEach((s, i) => {
+            const status = answers[i] === null ? 'Kosong' : (answers[i] === s.k ? 'Benar' : 'Salah');
+            const statusClass = status === 'Benar' ? 'bg-emerald-50 text-emerald-700' : (status === 'Salah' ? 'bg-rose-50 text-rose-700' : 'bg-slate-50 text-slate-500');
+            html += `
+                <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+                    <div class="p-4 ${statusClass} border-b font-bold flex justify-between">
+                        <span>Nomor ${i+1}</span>
+                        <span class="text-[10px] uppercase tracking-wider bg-white/50 px-2 py-1 rounded">${status}</span>
+                    </div>
+                    <div class="p-5">
+                        <div class="font-bold mb-4">${s.q}</div>
+                        <div class="text-sm mb-4">
+                            <p>Jawaban Anda: <span class="font-bold">${answers[i] !== null ? String.fromCharCode(65+answers[i]) : '-'}</span></p>
+                            <p>Kunci Jawaban: <span class="font-bold text-emerald-600">${String.fromCharCode(65+s.k)}</span></p>
+                        </div>
+                        <div class="bg-indigo-50 p-4 rounded-xl text-sm">
+                            <p class="font-black text-indigo-600 uppercase text-[10px] mb-1">Pembahasan:</p>
+                            <p>${s.p}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        document.getElementById('reviewList').innerHTML = html;
+        if (window.MathJax) MathJax.typesetPromise();
+    }
+
+    function scrollKeReview() {
+        document.getElementById('reviewContainer').scrollIntoView({ behavior: 'smooth' });
+    }
+</script>
+</body>
+</html>
